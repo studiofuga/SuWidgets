@@ -65,7 +65,8 @@ set(HEADERS
 add_library(SuWidgets SHARED ${SOURCES} ${HEADERS})
 
 target_include_directories(SuWidgets
-        PUBLIC ${CMAKE_SOURCE_DIR}
+        INTERFACE $<INSTALL_INTERFACE:include>
+        PRIVATE ${CMAKE_SOURCE_DIR}
         )
 
 target_link_libraries(SuWidgets
@@ -73,4 +74,53 @@ target_link_libraries(SuWidgets
         sigutils::sigutils suscan::suscan
         Qt5::Widgets Qt5::OpenGL
         fftw3
+        )
+
+# Target properties
+set_property(TARGET SuWidgets PROPERTY EXPORT_NAME ${PROJECT_NAME})
+
+# PC file generation
+#include(PcFileGenerator)
+#target_pc_file_generate(SuWidgets "SuWidget library")
+
+
+include(GNUInstallDirs)
+
+set(INSTALL_EXPORTS_DIR ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})
+
+# File install
+install(TARGETS SuWidgets
+        EXPORT suwidgets-export
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        COMPONENT LIB)
+
+install(FILES ${HEADERS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/suwidgets COMPONENT DEVEL)
+
+#install(FILES ${PROJECT_BINARY_DIR}/suwidgets.pc DESTINATION ${CMAKE_INSTALL_PKGCONFIGDIR} COMPONENT DEVEL)
+
+install(EXPORT suwidgets-export
+        FILE suwidgetsTargets.cmake
+        NAMESPACE suwidgets::
+        DESTINATION ${INSTALL_EXPORTS_DIR}
+        )
+
+set(TARGETS_EXPORT_NAME "${PROJECT_NAME}Targets")
+
+include(CMakePackageConfigHelpers)
+
+configure_package_config_file(
+        ${CMAKE_SOURCE_DIR}/cmake/suwidgetsConfig.cmake.in
+        ${CMAKE_CURRENT_BINARY_DIR}/suwidgetsConfig.cmake
+        INSTALL_DESTINATION ${INSTALL_EXPORTS_DIR}
+        PATH_VARS CMAKE_INSTALL_INCLUDEDIR)
+
+write_basic_package_version_file(
+        ${CMAKE_BINARY_DIR}/suwidgetsConfigVersion.cmake
+        VERSION ${PROJECT_VERSION}
+        COMPATIBILITY SameMajorVersion)
+
+install(FILES
+        ${CMAKE_CURRENT_BINARY_DIR}/suwidgetsConfig.cmake
+        ${CMAKE_BINARY_DIR}/suwidgetsConfigVersion.cmake
+        DESTINATION ${INSTALL_EXPORTS_DIR}
         )
