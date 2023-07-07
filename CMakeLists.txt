@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5.1)
-project(SuWidget
+project(SuWidgets
         VERSION 0.3.0
         )
 
@@ -38,6 +38,7 @@ set(SOURCES
         MultiToolBox.cpp MultiToolBox.ui
         GLWaterfall.cpp
         ThrottleableWidget.cpp SuWidgetsHelpers.cpp WFHelpers.cpp
+        Transition.cpp
         )
 
 set(HEADERS
@@ -45,7 +46,7 @@ set(HEADERS
         LCD.h
         LED.h
         Histogram.h
-        ColorChooserButton.h
+        Constellation.h
         QVerticalLabel.h
         SymView.h Decider.h
         TimeSpinBox.h
@@ -59,6 +60,7 @@ set(HEADERS
         MultiToolBox.h
         GLWaterfall.h
         ThrottleableWidget.h
+        Transition.h
         Version.h SuWidgetsHelpers.h WFHelpers.h
         )
 
@@ -86,13 +88,13 @@ set_property(TARGET SuWidgets PROPERTY EXPORT_NAME ${PROJECT_NAME})
 
 include(GNUInstallDirs)
 
-set(INSTALL_EXPORTS_DIR ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})
+set(INSTALL_EXPORTS_DIR ${CMAKE_INSTALL_LIBDIR}/cmake/suwidgets)
 
 # File install
 install(TARGETS SuWidgets
         EXPORT suwidgets-export
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        COMPONENT LIB)
+        INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/suwidgets)
 
 install(FILES ${HEADERS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/suwidgets COMPONENT DEVEL)
 
@@ -104,7 +106,7 @@ install(EXPORT suwidgets-export
         DESTINATION ${INSTALL_EXPORTS_DIR}
         )
 
-set(TARGETS_EXPORT_NAME "${PROJECT_NAME}Targets")
+set(TARGETS_EXPORT_NAME "suwidgetsTargets")
 
 include(CMakePackageConfigHelpers)
 
